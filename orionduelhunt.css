@@ -1,0 +1,74 @@
+/**
+ *------
+ * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
+ * OrionDuelHunt implementation : © <Your name here> <Your email address here>
+ *
+ * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
+ * See http://en.boardgamearena.com/#!doc/Studio for more information.
+ * -----
+ *
+ * orionduelhunt.css
+ *
+ * OrionDuelHunt stylesheet
+ *
+ */
+
+
+/********* You can start writing your CSS below this line: **********/
+
+
+#resized_id {
+	/*anachrony*/
+	position: relative;
+	transform-origin: top left;
+}
+
+.play_area {
+    margin-left: 0%;
+    margin-right: 0%;
+    z-index: 0;
+}
+
+.board {
+    background-image: url('img/orion_board.jpg');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    position: relative;
+    margin: 0px auto;
+	width: 2419px;
+	height: 1396px;
+    border-radius: 20px;
+    z-index: 1;
+}
+
+.board-inverted {
+    transform: rotate(180deg);
+}
+
+.board-orange-inverted {
+    transform: rotate(270deg);
+}
+
+.board-blue-inverted {
+    transform: rotate(90deg);
+}
+
+
+/* Pieces - Galaxies and Black Holes */
+
+.piece {
+    background-image: url('img/galax_holr.png');
+	background-size: 200% 100%;
+    width: 84px;
+    height: 84px;
+    position: absolute;
+    z-index:10;	
+}
+
+.black_hole {
+    background-position: -100% -0%;	
+}
+
+.galaxy {
+    background-position: -0% -0%;	
+}
