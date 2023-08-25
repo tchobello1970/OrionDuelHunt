@@ -24,8 +24,8 @@ define('ORANGE_COLOR','fba930');
 
 class OrionDuelHunt extends Table
 {
-	function __construct( )
-	{
+    function __construct( )
+    {
         // Your global variables labels:
         //  Here, you can assign labels to global variables you are using for this game.
         //  You can use any number of global variables with IDs between 10 and 99.
@@ -38,16 +38,16 @@ class OrionDuelHunt extends Table
             //    "my_first_global_variable" => 10,
             //    "my_second_global_variable" => 11,
             //      ...
-			
-			"board_display"        => 100
+            
+            "board_display"        => 100
         ) );        
-	}
-	
+    }
+    
     protected function getGameName( )
     {
-		// Used for translations and stuff. Please do not modify.
+        // Used for translations and stuff. Please do not modify.
         return "orionduelhunt";
-    }	
+    }    
 
     /*
         setupNewGame:
@@ -108,8 +108,8 @@ class OrionDuelHunt extends Table
         $sql_values[] = "( 'pass_turns_nb',0,0 )";
         $sql .= implode( ',', $sql_values );
         self::DbQuery( $sql );*/
-	}
-	
+    }
+    
     function updateStatistics()
     {
 /*
@@ -137,94 +137,94 @@ class OrionDuelHunt extends Table
     function initializeGame()
     {
         self::createSquares();
-		self::createGalaxiesAndBlackHoles();
-		self::createTiles();
+        self::createGalaxiesAndBlackHoles();
+        self::createTiles();
         self::notifyAllPlayers('info', clienttranslate( 'Welcome to ORION DUEL !' ), [] );
-	}
+    }
 
     function createSquares()  
     {
-		$sql = "INSERT INTO board ( board_square,board_color,board_black_hole, board_galaxy, board_color_save ) VALUES ";
-		$sql_values = [];
+        $sql = "INSERT INTO board ( board_square,board_color,board_black_hole, board_galaxy, board_color_save ) VALUES ";
+        $sql_values = [];
         foreach( $this->board_squares as $square )
-		{
-			$sql_values[] = "( '$square','0','0','0','0' )";
-		}
-		$sql .= implode( ',', $sql_values );
-		self::DbQuery( $sql );
-	}
+        {
+            $sql_values[] = "( '$square','0','0','0','0' )";
+        }
+        $sql .= implode( ',', $sql_values );
+        self::DbQuery( $sql );
+    }
 
     function createGalaxiesAndBlackHoles()
     {
         if( self::getGameStateValue('board_display' ) == 2)
-		{
-			foreach( $this->galaxies_1 as $square )
-			{
-				self::DbQuery( "UPDATE board SET board_galaxy=1 WHERE board_square='$square'" );
-			}
-		 
-			foreach( $this->black_holes_1 as $square )
-			{
-				self::DbQuery( "UPDATE board SET board_black_hole=1 WHERE board_square='$square'" );
-			}
-		}
+        {
+            foreach( $this->galaxies_1 as $square )
+            {
+                self::DbQuery( "UPDATE board SET board_galaxy=1 WHERE board_square='$square'" );
+            }
+         
+            foreach( $this->black_holes_1 as $square )
+            {
+                self::DbQuery( "UPDATE board SET board_black_hole=1 WHERE board_square='$square'" );
+            }
+        }
         else if( self::getGameStateValue('board_display' ) == 3)
-		{
-			foreach( $this->galaxies_2 as $square )
-			{
-				self::DbQuery( "UPDATE board SET board_galaxy=1 WHERE board_square='$square'" );
-			}
-		 
-			foreach( $this->black_holes_2 as $square )
-			{
-				self::DbQuery( "UPDATE board SET board_black_hole=1 WHERE board_square='$square'" );
-			}
-		}
- 		
-	}
+        {
+            foreach( $this->galaxies_2 as $square )
+            {
+                self::DbQuery( "UPDATE board SET board_galaxy=1 WHERE board_square='$square'" );
+            }
+         
+            foreach( $this->black_holes_2 as $square )
+            {
+                self::DbQuery( "UPDATE board SET board_black_hole=1 WHERE board_square='$square'" );
+            }
+        }
+         
+    }
 
     function createTiles()
-	{
+    {
 /* blue tiles 1 to 6, orange tiles 7 to 12 */
 
-		$sql = "INSERT INTO tile ( tile_type,tile_location,tile_location_save ) VALUES ";
-		$sql_values = [];
-		$sql_values[] = "( '1','hand','hand' )";
-		$sql_values[] = "( '2','hand','hand' )";
-		$sql_values[] = "( '3','hand','hand' )";
-		$sql_values[] = "( '3','hand','hand' )";			
-		$sql_values[] = "( '3','hand','hand' )";			
-		$sql_values[] = "( '4','hand','hand' )";
-		$sql_values[] = "( '4','hand','hand' )";			
-		$sql_values[] = "( '4','hand','hand' )";				
-		$sql_values[] = "( '5','hand','hand' )";
-		$sql_values[] = "( '5','hand','hand' )";			
-		$sql_values[] = "( '5','hand','hand' )";			
-		$sql_values[] = "( '6','hand','hand' )";
-		$sql_values[] = "( '6','hand','hand' )";			
-		$sql_values[] = "( '6','hand','hand' )";				
-		$sql_values[] = "( '7','hand','hand' )";
-		$sql_values[] = "( '8','hand','hand' )";
-		$sql_values[] = "( '9','hand','hand' )";
-		$sql_values[] = "( '9','hand','hand' )";			
-		$sql_values[] = "( '9','hand','hand' )";			
-		$sql_values[] = "( '10','hand','hand' )";
-		$sql_values[] = "( '10','hand','hand' )";			
-		$sql_values[] = "( '10','hand','hand' )";			
-		$sql_values[] = "( '11','hand','hand' )";
-		$sql_values[] = "( '11','hand','hand' )";			
-		$sql_values[] = "( '11','hand','hand' )";			
-		$sql_values[] = "( '12','hand','hand' )";
-		$sql_values[] = "( '12','hand','hand' )";			
-		$sql_values[] = "( '12','hand','hand' )";			
-		$sql .= implode( ',', $sql_values );
-		self::DbQuery( $sql );
+        $sql = "INSERT INTO tile ( tile_type,tile_location,tile_location_save ) VALUES ";
+        $sql_values = [];
+        $sql_values[] = "( '1','hand','hand' )";
+        $sql_values[] = "( '2','hand','hand' )";
+        $sql_values[] = "( '3','hand','hand' )";
+        $sql_values[] = "( '3','hand','hand' )";            
+        $sql_values[] = "( '3','hand','hand' )";            
+        $sql_values[] = "( '4','hand','hand' )";
+        $sql_values[] = "( '4','hand','hand' )";            
+        $sql_values[] = "( '4','hand','hand' )";                
+        $sql_values[] = "( '5','hand','hand' )";
+        $sql_values[] = "( '5','hand','hand' )";            
+        $sql_values[] = "( '5','hand','hand' )";            
+        $sql_values[] = "( '6','hand','hand' )";
+        $sql_values[] = "( '6','hand','hand' )";            
+        $sql_values[] = "( '6','hand','hand' )";                
+        $sql_values[] = "( '7','hand','hand' )";
+        $sql_values[] = "( '8','hand','hand' )";
+        $sql_values[] = "( '9','hand','hand' )";
+        $sql_values[] = "( '9','hand','hand' )";            
+        $sql_values[] = "( '9','hand','hand' )";            
+        $sql_values[] = "( '10','hand','hand' )";
+        $sql_values[] = "( '10','hand','hand' )";            
+        $sql_values[] = "( '10','hand','hand' )";            
+        $sql_values[] = "( '11','hand','hand' )";
+        $sql_values[] = "( '11','hand','hand' )";            
+        $sql_values[] = "( '11','hand','hand' )";            
+        $sql_values[] = "( '12','hand','hand' )";
+        $sql_values[] = "( '12','hand','hand' )";            
+        $sql_values[] = "( '12','hand','hand' )";            
+        $sql .= implode( ',', $sql_values );
+        self::DbQuery( $sql );
 
 
 
 
-	}
-		
+    }
+        
 
 
 
@@ -254,7 +254,7 @@ class OrionDuelHunt extends Table
         $result['squares'] = $this->board_squares;
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
         $result['galaxies'] = self::getObjectListFromDb( "SELECT board_square FROM board WHERE board_galaxy=1" );
-		$result['black_holes'] = self::getObjectListFromDb( "SELECT board_square FROM board WHERE board_black_hole=1" );
+        $result['black_holes'] = self::getObjectListFromDb( "SELECT board_square FROM board WHERE board_black_hole=1" );
         return $result;
     }
 
@@ -371,7 +371,7 @@ class OrionDuelHunt extends Table
     }    
     */
 
-	
+    
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie
@@ -392,13 +392,13 @@ class OrionDuelHunt extends Table
 
     function zombieTurn( $state, $active_player )
     {
-    	$statename = $state['name'];
-    	
+        $statename = $state['name'];
+        
         if ($state['type'] === "activeplayer") {
             switch ($statename) {
                 default:
                     $this->gamestate->nextState( "zombiePass" );
-                	break;
+                    break;
             }
 
             return;

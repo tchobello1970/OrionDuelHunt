@@ -27,3 +27,15 @@ $this->galaxies_1 = [ 13,17,35,51,59,75,93,97 ];
 $this->galaxies_2 = [ 3,6,35,51,59,75,106,106 ];
 $this->black_holes_1 = [ 15,32,38,55,72,78,95 ];
 $this->black_holes_2 = [ 12,15,18,55,81,85,89 ];
+
+$this->adjacent_hexes_even = [ -10,-9,-1,1,10,11 ];
+$this->adjacent_hexes_40_60 = [ -10,-9,1,10,11 ];
+$this->adjacent_hexes_odd = [ -11,-10,-1,1,9,10 ];
+$this->adjacent_hexes_39_59 = [ -11,-10,-1,9,10 ];
+
+$this->eridanus = [60,71,81,92];
+$this->canis_major = [18,28,39,49];
+$this->taurus = [103,104,105,106];
+$this->monoceros = [3,4,5,6];
+$this->lepus = [12,21,31,40];
+$this->gemini = [69,79,88,98];

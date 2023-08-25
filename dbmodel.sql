@@ -57,3 +57,7 @@ CREATE TABLE IF NOT EXISTS `board` (
    `tile_location_save` varchar(16) NOT NULL,
    PRIMARY KEY (`tile_id`)
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+ 
+ ALTER TABLE `player` ADD `constel_win` INT unsigned NOT NULL;
+ ALTER TABLE `player` ADD `galaxy_win` INT unsigned NOT NULL;
+ ALTER TABLE `player` ADD `black_hole_win` INT unsigned NOT NULL;

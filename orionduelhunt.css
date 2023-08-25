@@ -18,9 +18,9 @@
 
 
 #resized_id {
-	/*anachrony*/
-	position: relative;
-	transform-origin: top left;
+    /*anachrony*/
+    position: relative;
+    transform-origin: top left;
 }
 
 .play_area {
@@ -35,8 +35,8 @@
     background-repeat: no-repeat;
     position: relative;
     margin: 0px auto;
-	width: 2419px;
-	height: 1396px;
+    width: 2419px;
+    height: 1396px;
     border-radius: 20px;
     z-index: 1;
 }
@@ -57,18 +57,18 @@
 /* Pieces - Galaxies and Black Holes */
 
 .piece {
-    background-image: url('img/galax_holr.png');
-	background-size: 200% 100%;
+    background-image: url('img/galax_hole.png');
+    background-size: 200% 100%;
     width: 84px;
     height: 84px;
     position: absolute;
-    z-index:10;	
+    z-index:10;    
 }
 
 .black_hole {
-    background-position: -100% -0%;	
+    background-position: -100% -0%;    
 }
 
 .galaxy {
-    background-position: -0% -0%;	
+    background-position: -0% -0%;    
 }
