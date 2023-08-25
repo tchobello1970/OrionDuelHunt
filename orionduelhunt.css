@@ -57,6 +57,29 @@
 /* Pieces - Galaxies and Black Holes */
 
 .piece {
+    /*background-image: url('img/galax_hole.png');
+    background-size: 200% 100%;*/
+    width: 100px;
+    /*height: 84px;*/
+    position: absolute;    
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)
+}
+
+.black_hole {
+    background-position: -100% -0%;    
+    background-color: yellow;    
+}
+
+.galaxy {
+    background-position: -0% -0%;
+    background-color: green;    
+}    
+
+
+
+
+/*
+.piece {
     background-image: url('img/galax_hole.png');
     background-size: 200% 100%;
     width: 84px;
@@ -71,4 +94,4 @@
 
 .galaxy {
     background-position: -0% -0%;    
-}
+}*/

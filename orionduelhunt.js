@@ -169,38 +169,58 @@ function (dojo, declare) {
             return false;
         },
 
-
-
-
-
+        addHex: function(i,j)
+        {
+            var top = 185 + i * 93;
+            var left = 770 + j * 0.75 * 107;
+            dojo.place( this.format_block( 'jstpl_hex', {
+                id:`hex_{j}{i}`,
+                type:0,
+                top:top,
+                left:left,
+                class:'',
+                } ), player_board_id/*'hex'+galaxy*/);
+        },
 
         setupBoard: function()
         {
+            for (let i = 0; i < 10; i++) {
+                for (let j = 0; j < 10; j++) {
+                    this.addHex(i,j);
+                }
+            }
             console.log('sqwarzzz');
         //    console.log( this.gamedatas.squares );
             console.log( this.gamedatas.galaxies );
             console.log( this.gamedatas.black_holes );
             this.gamedatas.galaxies.forEach( (id, galaxy) =>
-            {
-            /*    dojo.place( this.format_block( 'jstpl_piece', {
-                    id:id,
+            { // 474,850 13 1 et 3
+                var top = 185 + (id.board_square % 10) * 93;
+                var left = 770 + Math.floor(id.board_square / 10) * 0.75 * 107;
+                dojo.place( this.format_block( 'jstpl_piece', {
+                    id:id.board_square,
                     type:0,
-                    top:0,
-                    left:0,
-                    } ),'hex'+galaxy);*/
+                    top:top,
+                    left:left,
+                    class:'galaxy',
+                    } ), player_board_id/*'hex'+galaxy*/);
 
             });
             this.gamedatas.black_holes.forEach( (id, black_hole) =>
             {
-             /*   dojo.place( this.format_block( 'jstpl_piece', {
-                    id:id,
-                    type: 1,
-                    top:200 +galaxy ,
-                    left: ,
-                    } ),'hex'+black_hole);*/
+                var top = 185 + (id.board_square % 10) * 93;
+                var left = 770 + Math.floor(id.board_square / 10) * 0.75 * 107;
+                dojo.place( this.format_block( 'jstpl_piece', {
+                    id:id.board_square,
+                    type:0,
+                    top:top,
+                    left:left,
+                    class:'black_hole',
+                    } ), player_board_id/*'hex'+black_hole*/);
 
             });
         },
+
         ///////////////////////////////////////////////////
         //// Player's action
         
