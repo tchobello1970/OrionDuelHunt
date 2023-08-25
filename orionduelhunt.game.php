@@ -180,8 +180,109 @@ class OrionDuelHunt extends Table
                 self::DbQuery( "UPDATE board SET board_black_hole=1 WHERE board_square='$square'" );
             }
         }
-         
+		else if( self::getGameStateValue('board_display' ) == 0)
+		{
+			self::createRandomBoardLayout();
+		}
     }
+
+    function createRandomBoardLayout()
+    {
+        $available_galaxy_hexes = $this->board_squares;
+		$available_black_hole_hexes = $this->board_squares;
+		shuffle( $available_galaxy_hexes );
+		shuffle( $available_black_hole_hexes );
+
+		for( $i=1 ; $i<9; $i++)
+		{
+            // picks first value from shuffled array
+			$galaxy = array_shift( $available_galaxy_hexes );
+//			self::notifyAllPlayers('info', clienttranslate( 'hex ${bearer}' ), ['bearer' => $galaxy ] );
+			self::DbQuery( "UPDATE board SET board_galaxy=1 WHERE board_square='$galaxy'" );
+			
+			// value is removed from black holes array
+			if( in_array( $galaxy, $available_black_hole_hexes ) )
+			{
+                array_splice($available_black_hole_hexes, array_search($galaxy, $available_black_hole_hexes ), 1);
+			}
+			$one_hex = self::getAdjacentToHex( $galaxy );
+			foreach( $one_hex as $hex )
+			{ // remove adjacents for galaxies and black holes
+				if( in_array( $hex, $available_galaxy_hexes ) )
+				{
+					array_splice($available_galaxy_hexes, array_search($hex, $available_galaxy_hexes ), 1);
+//			self::notifyAllPlayers('info', clienttranslate( 'hex ${bearer} removed' ), ['bearer' => $hex ] );
+				}				
+				if( in_array( $hex, $available_black_hole_hexes ) )
+				{
+					array_splice($available_black_hole_hexes, array_search($hex, $available_black_hole_hexes ), 1);
+				}
+			}
+			foreach( $one_hex as $hex )
+			{
+			    $two_hex = self::getAdjacentToHex( $hex );
+//				self::notifyAllPlayers('info', clienttranslate( 'hex2 ${bearer} removed' ), ['bearer' => $hex ] );	
+				foreach( $two_hex as $hex2 )
+				{
+					// remove 2-space for other galaxies
+					if( in_array( $hex2, $available_galaxy_hexes ) )
+					{
+						array_splice($available_galaxy_hexes, array_search($hex2, $available_galaxy_hexes ), 1);
+//					self::notifyAllPlayers('info', clienttranslate( 'hex2 ${bearer} removed' ), ['bearer' => $hex2 ] );	
+					}				
+				}				
+			}
+		}
+		for( $i=1 ; $i<8; $i++)
+		{
+            // picks first value from shuffled array
+			$black_hole = array_shift( $available_black_hole_hexes );
+			self::DbQuery( "UPDATE board SET board_black_hole=1 WHERE board_square='$black_hole'" );
+			$one_hex = self::getAdjacentToHex( $black_hole );
+			foreach( $one_hex as $hex )
+			{ // remove adjacents for and black holes
+				if( in_array( $hex, $available_black_hole_hexes ) )
+				{
+					array_splice($available_black_hole_hexes, array_search($hex, $available_black_hole_hexes ), 1);
+				}
+			}
+			foreach( $one_hex as $hex )
+			{
+			    $two_hex = self::getAdjacentToHex( $hex );
+				foreach( $two_hex as $hex )
+				{
+					// remove 2-space for other galaxies
+					if( in_array( $hex, $available_black_hole_hexes ) )
+					{
+						array_splice($available_black_hole_hexes, array_search($hex, $available_black_hole_hexes ), 1);
+					}				
+				}				
+			}
+		}
+ 	}
+
+    function getAdjacentToHex( $hex )
+	{
+		$adjacents = [];
+		if( (floor($hex/10)) % 2 == 0 )
+		{
+		    $delta_array = in_array( $hex, [40,60] ) ? $this->adjacent_hexes_40_60 : $this->adjacent_hexes_even;
+		}
+        else
+		{
+		    $delta_array = in_array( $hex, [39,59] ) ? $this->adjacent_hexes_39_59 : $this->adjacent_hexes_odd;
+		}
+		foreach( $delta_array as $delta )
+		{
+			if( in_array( $hex+$delta, $this->board_squares ) )
+			{
+			    $adjacents[] = $hex+$delta;
+			}
+		}
+		return $adjacents;
+	}
+	
+
 
     function createTiles()
     {
@@ -283,7 +384,20 @@ class OrionDuelHunt extends Table
     /*
         In this space, you can put any utility methods useful for your game logic
     */
-
+    function checkConstellationRoad( )
+	{
+		
+	}
+	
+	function checkGalaxyBonus()
+	{
+		
+	}
+	
+	function checkBlackHolesMalus()
+	{
+		
+	}
 
 
 //////////////////////////////////////////////////////////////////////////////
