@@ -253,8 +253,8 @@ class OrionDuelHunt extends Table
         $result['players'] = self::getCollectionFromDb( $sql );
         $result['squares'] = $this->board_squares;
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
-        $result['galaxies'] = self::getObjectListFromDb( "SELECT board_square FROM board WHERE board_galaxy=1" );
-        $result['black_holes'] = self::getObjectListFromDb( "SELECT board_square FROM board WHERE board_black_hole=1" );
+        $result['galaxies'] = self::getObjectListFromDb( "SELECT board_square square FROM board WHERE board_galaxy=1" );
+        $result['black_holes'] = self::getObjectListFromDb( "SELECT board_square square FROM board WHERE board_black_hole=1" );
         return $result;
     }
 

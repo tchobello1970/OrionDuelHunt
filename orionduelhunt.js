@@ -169,36 +169,51 @@ function (dojo, declare) {
             return false;
         },
 
-        addHex: function(i,j)
+
+        addHex: function(square)
         {
-            var top = 185 + i * 93;
-            var left = 770 + j * 0.75 * 107;
+            const x = square % 10;
+            const y = Math.floor(square / 10);
+			const delta = y%2-1;
+ 
+            var top = 185 + (-delta/2 + x) * 93;
+            var left = 770 + y * 0.75 * 107;
             dojo.place( this.format_block( 'jstpl_hex', {
-                id:`hex_{j}{i}`,
+                id:square,
                 type:0,
                 top:top,
                 left:left,
                 class:'',
-                } ), player_board_id/*'hex'+galaxy*/);
-        },
+                } ), player_board_id/*'hex'+galaxy*/);	
+		},				
 
         setupBoard: function()
         {
-            for (let i = 0; i < 10; i++) {
+/*            for (let i = 0; i < 10; i++) {
                 for (let j = 0; j < 10; j++) {
                     this.addHex(i,j);
                 }
-            }
+            }*/
+			
+			this.gamedatas.squares.forEach( square =>
+			{
+				this.addHex(square);
+			});
+			
             console.log('sqwarzzz');
-        //    console.log( this.gamedatas.squares );
+            console.log( this.gamedatas.squares );
             console.log( this.gamedatas.galaxies );
             console.log( this.gamedatas.black_holes );
-            this.gamedatas.galaxies.forEach( (id, galaxy) =>
+            this.gamedatas.galaxies.forEach( galaxy =>
             { // 474,850 13 1 et 3
-                var top = 185 + (id.board_square % 10) * 93;
-                var left = 770 + Math.floor(id.board_square / 10) * 0.75 * 107;
+                const x = galaxy.square % 10;
+                const y = Math.floor(galaxy.square / 10);
+			    const delta = y%2-1;
+                const top = 185 + (-delta/2 + x) * 93;
+                const left = 770 + y * 0.75 * 107;
+
                 dojo.place( this.format_block( 'jstpl_piece', {
-                    id:id.board_square,
+                    id:'galaxy_'+galaxy.square,
                     type:0,
                     top:top,
                     left:left,
@@ -206,17 +221,20 @@ function (dojo, declare) {
                     } ), player_board_id/*'hex'+galaxy*/);
 
             });
-            this.gamedatas.black_holes.forEach( (id, black_hole) =>
+            this.gamedatas.black_holes.forEach( black_hole =>
             {
-                var top = 185 + (id.board_square % 10) * 93;
-                var left = 770 + Math.floor(id.board_square / 10) * 0.75 * 107;
+                const x = black_hole.square % 10;
+                const y = Math.floor(black_hole.square / 10);
+			    const delta = y%2-1;
+                const top = 185 + (-delta/2 + x) * 93;
+                const left = 770 + y * 0.75 * 107;
                 dojo.place( this.format_block( 'jstpl_piece', {
-                    id:id.board_square,
+                    id:'black_hole_'+black_hole.square,
                     type:0,
                     top:top,
                     left:left,
                     class:'black_hole',
-                    } ), player_board_id/*'hex'+black_hole*/);
+                    } ), player_board_id/*'hex'+b*/);
 
             });
         },
