@@ -2,7 +2,7 @@
 -- ------
 -- BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
 -- OrionDuelHunt implementation : © <Your name here> <Your email address here>
--- 
+--
 -- This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
 -- See http://en.boardgamearena.com/#!doc/Studio for more information.
 -- -----
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `board` (
   `board_color` int(10) unsigned NOT NULL,
   `board_black_hole` int(10) unsigned NOT NULL,
   `board_galaxy` int(10) unsigned NOT NULL,
-  `board_color_save` int(10) unsigned NOT NULL,  
+  `board_color_save` int(10) unsigned NOT NULL,
   PRIMARY KEY (`board_square`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
 
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `board` (
    `tile_location_save` varchar(16) NOT NULL,
    PRIMARY KEY (`tile_id`)
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
- 
+
  ALTER TABLE `player` ADD `constel_win` INT unsigned NOT NULL;
  ALTER TABLE `player` ADD `galaxy_win` INT unsigned NOT NULL;
  ALTER TABLE `player` ADD `black_hole_win` INT unsigned NOT NULL;

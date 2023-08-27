@@ -7,7 +7,7 @@
  * This code has been produced on the BGA studio platform for use on https://boardgamearena.com.
  * See http://en.doc.boardgamearena.com/Studio for more information.
  * -----
- * 
+ *
  * orionduelhunt.action.php
  *
  * OrionDuelHunt main action entry point
@@ -15,54 +15,56 @@
  *
  * In this file, you are describing all the methods that can be called from your
  * user interface logic (javascript).
- *       
+ *
  * If you define a method "myAction" here, then you can call it from your javascript code with:
  * this.ajaxcall( "/orionduelhunt/orionduelhunt/myAction.html", ...)
  *
  */
-  
-  
+
+
   class action_orionduelhunt extends APP_GameAction
-  { 
+  {
     // Constructor: please do not modify
-   	public function __default()
-  	{
-  	    if( self::isArg( 'notifwindow') )
-  	    {
+       public function __default()
+      {
+          if( self::isArg( 'notifwindow') )
+          {
             $this->view = "common_notifwindow";
-  	        $this->viewArgs['table'] = self::getArg( "table", AT_posint, true );
-  	    }
-  	    else
-  	    {
+              $this->viewArgs['table'] = self::getArg( "table", AT_posint, true );
+          }
+          else
+          {
             $this->view = "orionduelhunt_orionduelhunt";
             self::trace( "Complete reinitialization of board game" );
       }
-  	} 
-  	
-  	// TODO: defines your action entry points there
+      }
 
-
-    /*
-    
-    Example:
-  	
-    public function myAction()
+    public function chooseGalaxies()
     {
-        self::setAjaxMode();     
+        self::setAjaxMode();
 
-        // Retrieve arguments
-        // Note: these arguments correspond to what has been sent through the javascript "ajaxcall" method
-        $arg1 = self::getArg( "myArgument1", AT_posint, true );
-        $arg2 = self::getArg( "myArgument2", AT_posint, true );
-
-        // Then, call the appropriate method in your game logic, like "playCard" or "myAction"
-        $this->game->myAction( $arg1, $arg2 );
-
-        self::ajaxResponse( );
+        $galaxies = self::getArg( "galaxies",  AT_alphanum_dash, true );
+        $this->game->chooseGalaxies( $galaxies );
+        self::ajaxResponse();
     }
-    
-    */
+
+    public function chooseBlackHoles()
+    {
+        self::setAjaxMode();
+
+        $black_holes = self::getArg( "black_holes",  AT_alphanum_dash, true );
+        $this->game->chooseBlackHoles( $black_holes );
+        self::ajaxResponse();
+    }
+
+     public function playerPass()
+    {
+        self::setAjaxMode();
+
+        $this->game->playerPass();
+        self::ajaxResponse();
+    }
 
   }
-  
+
 

@@ -61,28 +61,28 @@
     background-size: 200% 100%;*/
     width: 100px;
     /*height: 84px;*/
-    position: absolute;    
+    position: absolute;
     clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)
 }
 
 .black_hole {
-    background-position: -100% -0%;    
-    background-color: yellow;    
+    background-position: -100% -0%;
+    background-color: yellow;
 }
 
 .galaxy {
     background-position: -0% -0%;
-    background-color: green;    
-}    
+    background-color: green;
+}
 
 .blue_tile {
-    background-position: -100% -0%;    
-    background-color: blue;    
+    background-position: -100% -0%;
+    background-color: blue;
 }
 
 .orange_tile {
     background-position: -0% -0%;
-    background-color: orange;    
+    background-color: orange;
 }
 
 
@@ -93,13 +93,13 @@
     width: 84px;
     height: 84px;
     position: absolute;
-    z-index:10;    
+    z-index:10;
 }
 
 .black_hole {
-    background-position: -100% -0%;    
+    background-position: -100% -0%;
 }
 
 .galaxy {
-    background-position: -0% -0%;    
+    background-position: -0% -0%;
 }*/

@@ -20,6 +20,6 @@
 <script type="text/javascript">
     const jstpl_piece = '<div id="piece_${id}" class="piece ${class}" style="top: ${top}px; left: ${left}px;"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="hexagon" viewBox="2 2 96 82.6"><use href="#hexo"></use></svg></div>';
     const jstpl_hex = '<div id="hex_${id}" class="piece ${class}" style="top: ${top}px; left: ${left}px;"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="hexagon" viewBox="2 2 96 82.6"><use href="#hexo"></use></svg></div>';
-</script>  
+</script>
 
 {OVERALL_GAME_FOOTER}

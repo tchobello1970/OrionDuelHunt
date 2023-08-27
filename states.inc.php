@@ -7,7 +7,7 @@
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
  * -----
- * 
+ *
  * states.inc.php
  *
  * OrionDuelHunt game states description
@@ -49,7 +49,7 @@
 
 //    !! It is not a good idea to modify this file when a game is running !!
 
- 
+
 $machinestates = array(
 
     // The initial state. Please do not modify.
@@ -58,21 +58,84 @@ $machinestates = array(
         "description" => "",
         "type" => "manager",
         "action" => "stGameSetup",
-        "transitions" => array( "" => 5 )
+        "transitions" => array( "" => 3 )
     ),
-    
+
     // Note: ID=2 => your first state
 
-    5 => array(
-    		"name" => "playerTurn",
-    		"description" => clienttranslate('${actplayer} must play a card or pass'),
-    		"descriptionmyturn" => clienttranslate('${you} must play a card or pass'),
-    		"type" => "activeplayer",
-    		"possibleactions" => array( "playCard", "pass" ),
-    		"transitions" => array( "playCard" => 5, "pass" => 5 )
+    3 => array(
+        "name" => "gamePreparation",
+        "description" => "",
+        "type" => "game",
+        "action" => "stGamePreparation",
+        "transitions" => array( "playerChoice" => 11, "playerTurn" => 5 )
     ),
-    
-   
+
+    5 => array(
+            "name" => "playerTurn",
+            "description" => clienttranslate('${actplayer} must place a Tile'),
+            "descriptionmyturn" => clienttranslate('${you} must play a Tile'),
+            "type" => "activeplayer",
+            "possibleactions" => array( "playTile" ),
+            "transitions" => array( "playTile" => 10, "endGame" => 99 )
+    ),
+
+    10 => [
+        "name" => "nextPlayer",
+        "description" => '',
+        "type" => "game",
+        "action" => "stNextPlayer",
+        "transitions" => [ "playerTurn" => 5 ]
+    ],
+
+
+    11 => array(
+            "name" => "galaxiesChoice",
+            "description" => clienttranslate('${actplayer} must place Galaxies'),
+            "descriptionmyturn" => clienttranslate('${you} must place Galaxies'),
+            "type" => "activeplayer",
+            "possibleactions" => array( "placeGalaxy" ),
+            "transitions" => array( "nextPlayer" => 12 )
+    ),
+
+
+    12 => [
+        "name" => "nextPlayerGalaxy",
+        "description" => '',
+        "type" => "game",
+        "action" => "stNextPlayerGalaxy",
+        "transitions" => [ "playerChoice" => 13 ]
+    ],
+
+    13 => array(
+            "name" => "blackHolesChoice",
+            "description" => clienttranslate('${actplayer} must place Black Holes'),
+            "descriptionmyturn" => clienttranslate('${you} must place Black Holes'),
+            "type" => "activeplayer",
+            "possibleactions" => array( "placeBlackHole" ),
+            "transitions" => array( "nextPlayer" => 14 )
+    ),
+
+    14 => [
+        "name" => "nextPlayerBlackHole",
+        "description" => '',
+        "type" => "game",
+        "action" => "stNextPlayerBlackHole",
+        "transitions" => [ "firstPlayerTurn" => 15 ]
+    ],
+
+    15 => array(
+            "name" => "firstPlayerTurn",
+            "description" => clienttranslate('${actplayer} must place a Tile or pass'),
+            "descriptionmyturn" => clienttranslate('${you} must place a Tile or pass'),
+            "type" => "activeplayer",
+            "possibleactions" => array( "placeTile", "pass" ),
+            "transitions" => array( "playTile" => 5, "pass" => 10 )
+    ),
+
+
+
+
     // Final state.
     // Please do not modify (and do not overload action/args methods).
     99 => array(
