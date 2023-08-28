@@ -332,6 +332,7 @@ class OrionDuelHunt extends Table
         $result['no_tile_squares'] = self::getNoTileSquares();
         $result['galaxies'] = self::getGalaxies();
         $result['black_holes'] = self::getBlackHoles();
+		$result['tiles_in_hands'] = self::getTilesInHands();
         return $result;
     }
 
@@ -388,6 +389,11 @@ class OrionDuelHunt extends Table
     function getNoTileSquares()
     {
         return self::getObjectListFromDb( "SELECT board_square square FROM board WHERE board_color=0" );
+    }
+
+    function getTilesinHands()
+    {
+        return self::getcollectionFromDb( "SELECT tile_type type, count(tile_type) FROM tile WHERE tile_location='hand' GROUP BY tile_type", TRUE );
     }
 
 

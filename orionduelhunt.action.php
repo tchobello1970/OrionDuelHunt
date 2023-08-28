@@ -22,22 +22,22 @@
  */
 
 
-  class action_orionduelhunt extends APP_GameAction
-  {
+class action_orionduelhunt extends APP_GameAction
+{
     // Constructor: please do not modify
-       public function __default()
-      {
-          if( self::isArg( 'notifwindow') )
-          {
+    public function __default()
+    {
+        if( self::isArg( 'notifwindow') )
+        {
             $this->view = "common_notifwindow";
-              $this->viewArgs['table'] = self::getArg( "table", AT_posint, true );
-          }
-          else
-          {
+            $this->viewArgs['table'] = self::getArg( "table", AT_posint, true );
+        }
+        else
+        {
             $this->view = "orionduelhunt_orionduelhunt";
             self::trace( "Complete reinitialization of board game" );
-      }
-      }
+        }
+    }
 
     public function chooseGalaxies()
     {
@@ -66,5 +66,3 @@
     }
 
   }
-
-

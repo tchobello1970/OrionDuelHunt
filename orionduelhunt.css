@@ -54,39 +54,62 @@
 }
 
 
-/* Pieces - Galaxies and Black Holes */
+/* Elements - Galaxies and Black Holes */
 
-.piece {
-    /*background-image: url('img/galax_hole.png');
-    background-size: 200% 100%;*/
+
+.hex {
     width: 100px;
-    /*height: 84px;*/
     position: absolute;
     clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)
 }
 
-.black_hole {
-    background-position: -100% -0%;
-    background-color: yellow;
+.hex_black_hole {
+   background-color: yellow;
 }
 
-.galaxy {
-    background-position: -0% -0%;
-    background-color: green;
+.hex_galaxy {
+   background-color: green;
 }
 
-.blue_tile {
-    background-position: -100% -0%;
+.hex_blue_tile {
     background-color: blue;
 }
 
-.orange_tile {
-    background-position: -0% -0%;
+.hex_orange_tile {
     background-color: orange;
 }
 
 
+.element {
+    background-image: url('img/galax_hole.png');
+    background-size: 200% 100%;
+    width: 84px;
+    height: 84px;
+    position: absolute;
+    z-index:10;
+}
+.element.black_hole {
+	background-position: -100% -0%;
+}
+
+.element.galaxy {
+	background-position: -0% -0%;
+}
+
+
+.tile {
+    background-image: url('img/tiles84.png');
+    background-size: 800% 400%;
+    width: 100px;
+    height: 84px;
+    position: absolute;
+    z-index:5;
+}
+
+
+
 /*
+
 .piece {
     background-image: url('img/galax_hole.png');
     background-size: 200% 100%;

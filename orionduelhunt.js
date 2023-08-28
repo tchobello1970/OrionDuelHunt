@@ -108,6 +108,7 @@ function (dojo, declare) {
             case 'galaxiesChoice':
             case 'blackHolesChoice':
                 this.deactivateConnections();
+				this.removeHexes();
             break;
 
 
@@ -178,6 +179,15 @@ function (dojo, declare) {
             console.log(this.connections);
         },
 
+        removeHexes: function()
+		{
+            dojo.query( '.hex_black_hole' ).removeClass( 'hex_black_hole' );
+			dojo.query( '.hex_galaxy' ).removeClass( 'hex_galaxy' );
+			dojo.query( '.hex_blue_tile' ).removeClass( 'hex_blue_tile' );
+			dojo.query( '.hex_orange_tile' ).removeClass( 'hex_orange_tile' );
+		},
+
+
         addHex: function(square)
         {
             const x = square % 10;
@@ -208,13 +218,13 @@ function (dojo, declare) {
                 this.addHex(square);
             });
 
-
-
             console.log('sqwarzzz');
         //    console.log( this.gamedatas.squares );
             console.log( this.gamedatas.galaxies );
             console.log( this.gamedatas.black_holes );
-
+            console.log( 'tiles_in_hands' );
+            console.log( this.gamedatas.tiles_in_hands );			
+			
             this.placeGalaxies( this.gamedatas.galaxies );
             this.placeBlackHoles( this.gamedatas.black_holes );
         },
@@ -226,16 +236,13 @@ function (dojo, declare) {
                 const x = galaxy.square % 10;
                 const y = Math.floor(galaxy.square / 10);
                 const delta = y%2-1;
-                const top = 185 + (-delta/2 + x) * 93;
-                const left = 770 + y * 0.75 * 107;
-
-                dojo.place( this.format_block( 'jstpl_piece', {
-                    id:'galaxy_'+galaxy.square,
-                    type:0,
+                const top = 187 + (-delta/2 + x) * 93;
+                const left = 778 + y * 0.75 * 107;
+                dojo.place( this.format_block( 'jstpl_elt_galaxy', {
+                    id:galaxy.square,
                     top:top,
                     left:left,
-                    class:'galaxy',
-                    } ), player_board_id/*'hex'+galaxy*/);
+                    } ), player_board_id );
             });
         },
 
@@ -246,15 +253,13 @@ function (dojo, declare) {
                 const x = black_hole.square % 10;
                 const y = Math.floor(black_hole.square / 10);
                 const delta = y%2-1;
-                const top = 185 + (-delta/2 + x) * 93;
-                const left = 770 + y * 0.75 * 107;
-                dojo.place( this.format_block( 'jstpl_piece', {
-                    id:'black_hole_'+black_hole.square,
-                    type:0,
+                const top = 187 + (-delta/2 + x) * 93;
+                const left = 778 + y * 0.75 * 107;
+                dojo.place( this.format_block( 'jstpl_elt_black_hole', {
+                    id:black_hole.square,
                     top:top,
                     left:left,
-                    class:'black_hole',
-                    } ), player_board_id/*'hex'+b*/);
+                    } ), player_board_id );
             });
         },
 
@@ -313,29 +318,29 @@ function (dojo, declare) {
 
             if( this.checkAction( 'placeGalaxy', true ) )
             {
-                if( dojo.hasClass( 'hex_'+square,'galaxy' ) )
+                if( dojo.hasClass( 'hex_'+square,'hex_galaxy' ) )
                 {
-                    dojo.removeClass( 'hex_'+square,'galaxy' );
+                    dojo.removeClass( 'hex_'+square,'hex_galaxy' );
                     const index = this.galaxies.indexOf(square);
                     this.galaxies.splice(index, 1);
                 }
                 else
                 {
-                    dojo.addClass( 'hex_'+square,'galaxy' );
+                    dojo.addClass( 'hex_'+square,'hex_galaxy' );
                     this.galaxies.push(square)
                 }
             }
             if( this.checkAction( 'placeBlackHole', true ) )
             {
-                if( dojo.hasClass( 'hex_'+square,'black_hole' ) )
+                if( dojo.hasClass( 'hex_'+square,'hex_black_hole' ) )
                 {
-                    dojo.removeClass( 'hex_'+square,'black_hole' );
+                    dojo.removeClass( 'hex_'+square,'hex_black_hole' );
                     const index = this.black_holes.indexOf(square);
                     this.black_holes.splice(index, 1);
                 }
                 else
                 {
-                    dojo.addClass( 'hex_'+square,'black_hole' );
+                    dojo.addClass( 'hex_'+square,'hex_black_hole' );
                     this.black_holes.push(square)
                 }
             }
@@ -421,7 +426,6 @@ function (dojo, declare) {
             {
                 dojo.subscribe( notifications_nodelay[i], this, "notif_"+ notifications_nodelay[i]);
             }
-
         },
 
         // TODO: from this point and below, you can write your game notifications handling methods
@@ -429,21 +433,16 @@ function (dojo, declare) {
         {
             console.log( 'galaxiesChoice' );
             console.log( notif );
-            if( this.player_id != notif.args.player_id )
-            {
-                this.placeGalaxies( notif.args.galaxies );
-            }
-
+			dojo.query( '.hex_galaxy' ).removeClass( 'hex_galaxy' );
+            this.placeGalaxies( notif.args.galaxies );
         },
 
         notif_blackHolesChoice: function( notif )
         {
             console.log( 'blackHolesChoice' );
             console.log( notif );
-            if( this.player_id != notif.args.player_id )
-            {
-                this.placeBlackHoles( notif.args.black_holes );
-            }
+			dojo.query( '.hex_black_hole' ).removeClass( 'hex_black_hole' );
+            this.placeBlackHoles( notif.args.black_holes );
         },
 
    });
