@@ -30,7 +30,9 @@ $this->galaxies_2 = [ 3,6,35,51,59,75,103,106 ];
 $this->black_holes_1 = [ 15,32,38,55,72,78,95 ];
 $this->black_holes_2 = [ 12,15,18,55,92,95,98 ];
 
+/* even or odd is about floor int division and not modulo*/
 $this->adjacent_hexes_even = [ -10,-9,-1,1,10,11 ];
+$this->adjacent_hexes_49 = [ -10,-1,10 ];
 $this->adjacent_hexes_40_60 = [ -10,-9,1,10,11 ];
 $this->adjacent_hexes_odd = [ -11,-10,-1,1,9,10 ];
 $this->adjacent_hexes_39_59 = [ -11,-10,-1,9,10 ];
