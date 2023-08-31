@@ -57,6 +57,18 @@ class action_orionduelhunt extends APP_GameAction
         self::ajaxResponse();
     }
 
+    public function placeTile()
+    {
+        self::setAjaxMode();
+
+        $blue_tiles = self::getArg( "blue_tiles",  AT_alphanum_dash, true );
+		$orange_tiles = self::getArg( "orange_tiles",  AT_alphanum_dash, true );
+        $this->game->placeTileOnBoard( $blue_tiles, $orange_tiles );
+        self::ajaxResponse();
+    }
+
+
+
      public function playerPass()
     {
         self::setAjaxMode();

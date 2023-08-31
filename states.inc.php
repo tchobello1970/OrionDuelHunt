@@ -76,8 +76,9 @@ $machinestates = array(
             "description" => clienttranslate('${actplayer} must place a Tile'),
             "descriptionmyturn" => clienttranslate('${you} must play a Tile'),
             "type" => "activeplayer",
-            "possibleactions" => array( "playTile" ),
-            "transitions" => array( "playTile" => 10, "endGame" => 99 )
+			"action" => "stPlayerTurn",
+            "possibleactions" => array( "placeTile" ),
+            "transitions" => array( "nextPlayer" => 10, "endGame" => 99 )
     ),
 
     10 => [
@@ -91,8 +92,8 @@ $machinestates = array(
 
     11 => array(
             "name" => "galaxiesChoice",
-            "description" => clienttranslate('${actplayer} must place Galaxies'),
-            "descriptionmyturn" => clienttranslate('${you} must place Galaxies'),
+            "description" => clienttranslate('${actplayer} must place 8 Galaxies'),
+            "descriptionmyturn" => clienttranslate('${you} must place 8 Galaxies'),
             "type" => "activeplayer",
             "possibleactions" => array( "placeGalaxy" ),
             "transitions" => array( "nextPlayer" => 12 )
@@ -109,8 +110,8 @@ $machinestates = array(
 
     13 => array(
             "name" => "blackHolesChoice",
-            "description" => clienttranslate('${actplayer} must place Black Holes'),
-            "descriptionmyturn" => clienttranslate('${you} must place Black Holes'),
+            "description" => clienttranslate('${actplayer} must place 7 Black Holes'),
+            "descriptionmyturn" => clienttranslate('${you} must place 7 Black Holes'),
             "type" => "activeplayer",
             "possibleactions" => array( "placeBlackHole" ),
             "transitions" => array( "nextPlayer" => 14 )
@@ -130,7 +131,7 @@ $machinestates = array(
             "descriptionmyturn" => clienttranslate('${you} must place a Tile or pass'),
             "type" => "activeplayer",
             "possibleactions" => array( "placeTile", "pass" ),
-            "transitions" => array( "playTile" => 5, "pass" => 10 )
+            "transitions" => array( "nextPlayer" => 5, "pass" => 10 )
     ),
 
 

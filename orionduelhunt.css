@@ -83,46 +83,43 @@
 .element {
     background-image: url('img/galax_hole.png');
     background-size: 200% 100%;
-    width: 84px;
-    height: 84px;
+    width: 70px;
+    height: 70px;
     position: absolute;
     z-index:10;
-}
-.element.black_hole {
-	background-position: -100% -0%;
 }
 
 .element.galaxy {
 	background-position: -0% -0%;
 }
 
+.element.black_hole {
+	background-position: -100% -0%;
+}
 
 .tile {
-    background-image: url('img/tiles84.png');
-    background-size: 800% 400%;
+    background-image: url('img/tiles.png');
+    background-size: 200% 100%;
     width: 100px;
-    height: 84px;
+	height: 86px;
     position: absolute;
     z-index:5;
 }
-
-
-
-/*
-
-.piece {
-    background-image: url('img/galax_hole.png');
-    background-size: 200% 100%;
-    width: 84px;
-    height: 84px;
-    position: absolute;
-    z-index:10;
+.tile.blue {
+	background-position: -0% -0%;
 }
 
-.black_hole {
-    background-position: -100% -0%;
+.tile.orange {
+	background-position: -100% -0%;
 }
 
-.galaxy {
-    background-position: -0% -0%;
-}*/
+.appears
+{          
+    -webkit-animation: appears 2s  forwards;
+    animation: appears 2s  forwards;    
+}
+
+@-webkit-keyframes "appears" {
+    0% { -webkit-transform: scale(0); }
+    100% { -webkit-transform: scale(1); }
+}

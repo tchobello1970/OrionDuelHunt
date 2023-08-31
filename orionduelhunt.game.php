@@ -291,7 +291,14 @@ class OrionDuelHunt extends Table
         $adjacents = [];
         if( (floor($hex/10)) % 2 == 0 )
         {
-            $delta_array = in_array( $hex, [40,60] ) ? $this->adjacent_hexes_40_60 : $this->adjacent_hexes_even;
+            if( $hex == 49 )
+			{
+				$delta_array = $this->adjacent_hexes_49;
+			}
+			else
+			{
+			    $delta_array = in_array( $hex, [40,60] ) ? $this->adjacent_hexes_40_60 : $this->adjacent_hexes_even;
+			}
         }
         else
         {
@@ -332,6 +339,8 @@ class OrionDuelHunt extends Table
         $result['no_tile_squares'] = self::getNoTileSquares();
         $result['galaxies'] = self::getGalaxies();
         $result['black_holes'] = self::getBlackHoles();
+		$result['orange_tiles'] = self::getOrangeTiles();
+		$result['blue_tiles'] = self::getBlueTiles();
 		$result['tiles_in_hands'] = self::getTilesInHands();
         return $result;
     }
@@ -376,19 +385,44 @@ class OrionDuelHunt extends Table
 
     }
 
+
+
     function getGalaxies()
     {
-        return self::getObjectListFromDb( "SELECT board_square square FROM board WHERE board_galaxy=1" );
+        return self::getObjectListFromDb( "SELECT board_square square FROM board WHERE board_galaxy=1",true );
     }
 
     function getBlackHoles()
     {
-        return self::getObjectListFromDb( "SELECT board_square square FROM board WHERE board_black_hole=1" );
+        return self::getObjectListFromDb( "SELECT board_square square FROM board WHERE board_black_hole=1",true );
     }
+
+    function getOrangeTiles()
+	{
+        return self::getObjectListFromDb( "SELECT board_square square FROM board WHERE board_color=2",true );
+	}
+
+    function getBlueTiles()
+	{
+        return self::getObjectListFromDb( "SELECT board_square square FROM board WHERE board_color=1",true );
+	}
+
+
+
+	
+    function getNewOrangeTiles()
+	{
+        return self::getObjectListFromDb( "SELECT board_square square FROM board WHERE board_color=2 AND board_color !=board_color_save", true );
+	}
+
+    function getNewBlueTiles()
+	{
+        return self::getObjectListFromDb( "SELECT board_square square FROM board WHERE board_color=1 AND board_color !=board_color_save", true );
+	}
 
     function getNoTileSquares()
     {
-        return self::getObjectListFromDb( "SELECT board_square square FROM board WHERE board_color=0" );
+        return self::getObjectListFromDb( "SELECT board_square square FROM board WHERE board_color=0", true );
     }
 
     function getTilesinHands()
@@ -471,7 +505,6 @@ class OrionDuelHunt extends Table
         return true;
     }
 
-
     function chooseBlackHoles( $black_holes )
     {
 /* checks and DB update */
@@ -551,6 +584,239 @@ class OrionDuelHunt extends Table
             $this->gamestate->nextState( 'pass' );
     }
 
+    function placeTileOnBoard( $blue_tiles, $orange_tiles )
+	{
+/*
+    check tile is valid and returns type
+	check tile is in hand
+
+*/        self::checkAction( 'placeTile' );
+
+        $blue_pieces = explode("_", $blue_tiles);
+        $last_piece = array_pop( $blue_pieces ); //remove useless _
+
+        $orange_pieces = explode("_", $orange_tiles);
+        $last_piece = array_pop( $orange_pieces ); //remove useless _
+
+        $type = self::getPlacedTileType( $blue_pieces, $orange_pieces );
+		if( $type == 0 )
+			throw new BgaUserException( "You must place a valid Tile 3" );
+		$nb_type = self::getUniqueValueFromDb( "SELECT COUNT(tile_id) FROM tile WHERE tile_type='$type' AND tile_location='hand'" );
+		if( $nb_type == 0 )
+			throw new BgaUserException( "You have no more Tile of this type" );
+
+        if( self::checkValidPlaceOnBoard( $blue_pieces, $orange_pieces ) == FALSE )
+            throw new BgaUserException( "Your Tile is not linked to a valid Chain" );
+
+		$remove_type = ( $nb_type == 1 ) ? $type : 0;
+		self::DbQuery( "UPDATE tile SET tile_location='board' WHERE tile_type='$type' AND tile_location='hand' LIMIT 1" );
+        foreach( $blue_pieces as $piece )
+        {
+            self::DbQuery( "UPDATE board SET board_color=1 WHERE board_square='$piece'" );
+        }
+        foreach( $orange_pieces as $piece )
+        {
+            self::DbQuery( "UPDATE board SET board_color=2 WHERE board_square='$piece'" );
+        }
+        self::notifyAllPlayers( 'placeTiles', clienttranslate('${player_name} places a Tile'), [
+            'player_name' => self::getActivePlayerName(),
+            'player_id' => self::getActivePlayerId(), 
+			'blue_pieces' => self::getNewBlueTiles(),
+			'orange_pieces' => self::getNewOrangeTiles(),
+			'remove_type' => $remove_type
+			]);
+
+
+/*TODO  check victory */
+
+        $this->gamestate->nextState( 'nextPlayer' );
+    }
+
+    function getPlacedTileType( $blue_pieces, $orange_pieces )
+	{
+/*
+    tile must contain less than 3 pieces including one of active player color
+
+*/		
+        $player_id = self::getActivePlayerId();
+		$player_color = self::getPlayerColorById( $player_id );
+		$bBluePlayer = ($player_color == BLUE_COLOR);
+		$nb_blue = count( $blue_pieces );
+		$nb_orange = count( $orange_pieces );
+		$nb_pieces = $nb_blue + $nb_orange;
+        $type = 0;
+self::notifyAllPlayers('info', clienttranslate( 'nb_blue ${bearer}' ), ['bearer' => $nb_blue ] );
+self::notifyAllPlayers('info', clienttranslate( 'nb_orange ${bearer}' ), ['bearer' => $nb_orange ] );
+self::notifyAllPlayers('info', clienttranslate( 'nb_pieces ${bearer}' ), ['bearer' => $nb_pieces ] );
+
+		if( $bBluePlayer )
+		{
+			if( $nb_blue < 1 || $nb_pieces > 3 || $nb_blue < $nb_orange )
+			    throw new BgaUserException( "You must place a valid Tile 1 " );
+			//$type=3;				
+		}
+		else
+		{	
+			if( $nb_orange < 1 || $nb_pieces > 3 || $nb_blue > $nb_orange )
+			    throw new BgaUserException( "You must place a valid Tile 2" );		
+		}
+		if( $nb_pieces == 1 )
+		{
+		    $type = 1+6*$bBluePlayer;
+		}
+		else if( $nb_pieces == 2 )
+		{
+			if( $nb_blue == $nb_orange )
+			{
+				if( self::checkAdjacentPieces( $blue_pieces[0], $orange_pieces[0] ) )
+				{					
+				    $type = 3+6*$bBluePlayer;
+				}
+			}
+			else
+			{
+				if( $bBluePlayer )
+				{
+					if( self::checkAdjacentPieces( $blue_pieces[0], $blue_pieces[1] ) )
+					{
+				        $type = 8;
+					}
+					else
+					   throw new BgaUserException( "You must place a valid 2 Tiles Piece" );					
+				}
+				else
+				{
+					if( self::checkAdjacentPieces( $orange_pieces[0], $orange_pieces[1] ) )
+					{
+				        $type = 2;
+					}
+					else
+					   throw new BgaUserException( "You must place a valid 2 Tiles Piece" );	
+				}					
+			}
+		}
+		else
+		{
+			$type =	self::getTripleType( $bBluePlayer, $blue_pieces, $orange_pieces );
+		}
+       self::notifyAllPlayers('info', clienttranslate( 'type ${bearer}' ), ['bearer' => $type ] );		
+        return $type;
+	}
+	
+    function checkAdjacentPieces( $piece1, $piece2 )
+	{
+        $adj_piece1 = self::getAdjacentToHex( $piece1 );
+		return in_array( $piece2, $adj_piece1 );
+	}
+
+    function getTripleType( $bBluePlayer, $blue_pieces, $orange_pieces )
+	{
+        $first_piece = $bBluePlayer ? $orange_pieces[0] : $blue_pieces[0];
+		self::dump('first_piece', $first_piece);
+		$adj_pieces = self::getAdjacentToHex( $first_piece );
+		self::dump('adj_pieces', $adj_pieces);
+		$second_piece_array = array_intersect($adj_pieces,$bBluePlayer ? $blue_pieces : $orange_pieces );
+		self::dump('blue_pieces', $blue_pieces);
+		if( count( $second_piece_array ) == 0 )
+			throw new BgaUserException( "You must place a valid 3 Tiles Piece 2 " );	
+        self::dump('second_piece_array', $second_piece_array);
+		$second_piece = array_shift( $second_piece_array );
+		$adj_pieces_2 = self::getAdjacentToHex( $second_piece );
+        $third_piece_array = array_intersect($adj_pieces_2,$bBluePlayer ? $blue_pieces : $orange_pieces );
+		if( count( $third_piece_array ) == 0 )
+			throw new BgaUserException( "You must place a valid 3 Tiles Piece 3" );
+		self::dump('third_piece_array', $third_piece_array);
+		$third_piece = array_shift( $third_piece_array );
+self::notifyAllPlayers('info', clienttranslate( 'first piece ${bearer}' ), ['bearer' => $first_piece ] );
+self::notifyAllPlayers('info', clienttranslate( 'second piece ${bearer}' ), ['bearer' => $second_piece ] );
+self::notifyAllPlayers('info', clienttranslate( 'third piece ${bearer}' ), ['bearer' => $third_piece ] );
+        $adj_pieces_3 = self::getAdjacentToHex( $third_piece );
+		
+        $first_piece_array = array_intersect($adj_pieces_3,$bBluePlayer ? $orange_pieces : $blue_pieces );
+		self::dump('first_piece_array', $first_piece_array);
+		self::dump('difference_piece', $first_piece - $third_piece );
+		if( count( $first_piece_array ) == 1 )
+		{
+			return( 6+6*$bBluePlayer );
+		}
+		else if( in_array( abs( $first_piece - $third_piece ), [ 2, 19, 21 ] ) )
+		{
+			return( 4+6*$bBluePlayer );
+		}
+		else if( ( floor($third_piece/10 ) % 2 == 0 ) && in_array( $first_piece - $third_piece , [ -20, -11, -8, 9, 12, 20 ] ) )
+		{
+			return( 5+6*$bBluePlayer );
+		}
+		else if( ( floor($third_piece/10 ) % 2 == 1 ) && in_array( $first_piece - $third_piece , [ -20, -12, -9, 8, 11, 20 ] ) )
+		{
+			return( 5+6*$bBluePlayer );
+		} 
+		else
+			throw new BgaUserException( "You must place a valid 3-Tiles Piece 4" );
+	}		
+	
+    function checkValidPlaceOnBoard( $blue_tiles, $orange_tiles )
+	{
+	    $galaxies = self::getGalaxies();
+        $black_holes = self::getBlackHoles();
+		$orange_tiles_on_board = self::getOrangeTiles();
+		$blue_tiles_on_board = self::getBlueTiles();		
+		self::dump('galaxies', $galaxies);
+		self::dump('blue_tiles', $blue_tiles);
+		$blue_galaxies = array_intersect(  $galaxies, $blue_tiles );
+		$orange_galaxies = array_intersect( $orange_tiles, $galaxies );
+		$blue_black_holes = array_intersect( $blue_tiles, $black_holes );
+		$orange_black_holes = array_intersect( $orange_tiles, $black_holes );
+		self::dump('blue_galaxies', $blue_galaxies);
+		self::dump('orange_galaxies', $orange_galaxies);
+		self::dump('blue_black_holes', $blue_black_holes);
+		self::dump('orange_black_holes', $orange_black_holes);
+/*		if( count( $blue_galaxies ) + count( $orange_galaxies ) + count( $blue_black_holes ) + count( $orange_black_holes ) == 0 )
+		{
+			return TRUE;
+		}*/
+		if( count($blue_galaxies) > 0 || count($blue_black_holes) > 0 )
+		{
+			$bLink = FALSE;
+			foreach( $blue_tiles as $piece )
+			{
+                $adj_pieces = self::getAdjacentToHex( $piece );
+				$blue_link = array_intersect( $adj_pieces, $blue_tiles_on_board );
+				{
+					if( count( $blue_link ) > 0 )
+					{
+						$bLink = TRUE;
+					}
+				}
+			}
+			if( $bLink == FALSE )
+			{
+				return FALSE;
+			}
+		}
+		if( count($orange_galaxies) > 0 || count($orange_black_holes) > 0 )
+		{
+			$bLink = FALSE;
+			foreach( $orange_tiles as $piece )
+			{
+                $adj_pieces = self::getAdjacentToHex( $piece );
+				$orange_link = array_intersect( $adj_pieces, $orange_tiles_on_board );
+				{
+					if( count( $orange_link ) > 0 )
+					{
+						$bLink = TRUE;
+					}
+				}
+			}
+			if( $bLink == FALSE )
+			{
+				return FALSE;
+			}
+		}
+		return TRUE;
+	}
+
+	
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state arguments
 ////////////
@@ -578,7 +844,11 @@ class OrionDuelHunt extends Table
         $this->gamestate->nextState( 'playerTurn' );
     }
 
-
+    function stPlayerTurn()
+    {
+		self::DbQuery( "UPDATE board SET board_color_save=board_color WHERE 1" );
+		self::DbQuery( "UPDATE tile SET tile_location_save=tile_location WHERE 1" );
+	}
 
     /*
 

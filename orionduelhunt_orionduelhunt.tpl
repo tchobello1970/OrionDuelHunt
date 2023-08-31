@@ -21,6 +21,7 @@
     const jstpl_hex = '<div id="hex_${id}" class="hex ${class}" style="top: ${top}px; left: ${left}px;"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="hexagon" viewBox="2 2 96 82.6"><use href="#hexo"></use></svg></div>';
     const jstpl_elt_black_hole = '<div id="black_hole_${id}" class="element black_hole" style="top: ${top}px; left: ${left}px;"></div>';
     const jstpl_elt_galaxy = '<div id="galaxy_${id}" class="element galaxy" style="top: ${top}px; left: ${left}px;"></div>';
+    const jstpl_tile = '<div id="${color}_tile_${id}" class="tile ${color} appears" style="top: ${top}px; left: ${left}px;"></div>';
 
 
 </script>

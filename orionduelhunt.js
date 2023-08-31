@@ -33,7 +33,9 @@ function (dojo, declare) {
 
             this.galaxies = [];
             this.black_holes = [];
-
+            this.blue_tiles = [];
+            this.orange_tiles = [];
+			
             this.connections = [];
         },
 
@@ -137,7 +139,11 @@ function (dojo, declare) {
                     break;
                  case 'firstPlayerTurn':
                     this.addActionButton( 'playerPass', _("Pass"), 'onPlayerPass' );
+					this.addActionButton( 'placeTileFirst', _("Place Tile"), 'onPlaceTile' );
                     break;
+                 case 'playerTurn':
+					this.addActionButton( 'placeTile', _("Place Tile"), 'onPlaceTile' );
+                    break;					
                 }
             }
         },
@@ -153,7 +159,6 @@ function (dojo, declare) {
         */
         isCurrentPlayerBlue: function()
         {
-            console.log(this.gamedatas.players[ this.player_id ].color);
             if( this.gamedatas.players[ this.player_id ] )
             {
                 if( this.gamedatas.players[ this.player_id ].color == this.BLUE )
@@ -161,6 +166,18 @@ function (dojo, declare) {
             }
             return false;
         },
+
+
+        isCurrentPlayerOrange: function()
+        {
+            if( this.gamedatas.players[ this.player_id ] )
+            {
+                if( this.gamedatas.players[ this.player_id ].color == this.ORANGE )
+                {   return true;   }
+            }
+            return false;
+        },
+
 
         deactivateConnections: function()
         {
@@ -170,11 +187,21 @@ function (dojo, declare) {
 
         activateConnections: function()
         {
-            this.gamedatas.no_tile_squares.forEach( id  =>
+            this.gamedatas.no_tile_squares.forEach( square  =>
             {
-//                console.info(id.square);
-                this.connections.push( dojo.connect( $('hex_'+id.square) , 'click', () => this.onClickOnHex(id.square) ) );
+                this.connections.push( dojo.connect( $('hex_'+square) , 'click', () => this.onClickOnHex(square) ) );
             });
+			
+            this.gamedatas.galaxies.forEach( square =>
+            {
+                this.connections.push( dojo.connect( $('galaxy_'+square) , 'click', () => this.onClickOnHex( square) ) );
+			});			
+
+            this.gamedatas.black_holes.forEach( square =>
+            {
+                this.connections.push( dojo.connect( $('black_hole_'+square) , 'click', () => this.onClickOnHex( square) ) );
+			});	
+
             console.log( 'connections'  );
             console.log(this.connections);
         },
@@ -186,24 +213,6 @@ function (dojo, declare) {
 			dojo.query( '.hex_blue_tile' ).removeClass( 'hex_blue_tile' );
 			dojo.query( '.hex_orange_tile' ).removeClass( 'hex_orange_tile' );
 		},
-
-
-        addHex: function(square)
-        {
-            const x = square % 10;
-            const y = Math.floor(square / 10);
-            const delta = y%2-1;
-
-            var top = 185 + (-delta/2 + x) * 93;
-            var left = 770 + y * 0.75 * 107;
-            dojo.place( this.format_block( 'jstpl_hex', {
-                id:square,
-                type:0,
-                top:top,
-                left:left,
-                class:'',
-                } ), player_board_id/*'hex'+galaxy*/);
-        },
 
         setupBoard: function()
         {
@@ -227,19 +236,38 @@ function (dojo, declare) {
 			
             this.placeGalaxies( this.gamedatas.galaxies );
             this.placeBlackHoles( this.gamedatas.black_holes );
+			this.placeTilesInHands( this.gamedatas.tiles_in_hands );
+            this.placeBoardTiles( this.gamedatas.blue_tiles, this.gamedatas.orange_tiles );			
+        },
+
+        addHex: function(square)
+        {
+            const x = square % 10;
+            const y = Math.floor(square / 10);
+            const delta = y%2-1;
+
+            var top = 185 + (-delta/2 + x) * 93;
+            var left = 770 + y * 0.75 * 107;
+            dojo.place( this.format_block( 'jstpl_hex', {
+                id:square,
+                type:0,
+                top:top,
+                left:left,
+                class:'',
+                } ), player_board_id/*'hex'+galaxy*/);
         },
 
         placeGalaxies: function( galaxies )
         {
-            galaxies.forEach( galaxy =>
+            galaxies.forEach( square =>
             { // 474,850 13 1 et 3
-                const x = galaxy.square % 10;
-                const y = Math.floor(galaxy.square / 10);
+                const x = square % 10;
+                const y = Math.floor( square / 10);
                 const delta = y%2-1;
-                const top = 187 + (-delta/2 + x) * 93;
-                const left = 778 + y * 0.75 * 107;
+                const top = 194 + (-delta/2 + x) * 93;
+                const left = 782 + y * 0.75 * 107;
                 dojo.place( this.format_block( 'jstpl_elt_galaxy', {
-                    id:galaxy.square,
+                    id: square,
                     top:top,
                     left:left,
                     } ), player_board_id );
@@ -248,20 +276,163 @@ function (dojo, declare) {
 
         placeBlackHoles: function( black_holes )
         {
-            black_holes.forEach( black_hole =>
+            black_holes.forEach( square =>
             {
-                const x = black_hole.square % 10;
-                const y = Math.floor(black_hole.square / 10);
+                const x = square % 10;
+                const y = Math.floor( square / 10);
                 const delta = y%2-1;
-                const top = 187 + (-delta/2 + x) * 93;
-                const left = 778 + y * 0.75 * 107;
+                const top = 194 + (-delta/2 + x) * 93;
+                const left = 782 + y * 0.75 * 107;
                 dojo.place( this.format_block( 'jstpl_elt_black_hole', {
-                    id:black_hole.square,
+                    id:square,
                     top:top,
                     left:left,
                     } ), player_board_id );
             });
         },
+
+        placeBoardTiles: function( blue_tiles, orange_tiles )
+		{
+            blue_tiles.forEach( square =>
+            {
+                const x = square % 10;
+                const y = Math.floor( square / 10);
+                const delta = y%2-1;
+                var top = 183 + (-delta/2 + x) * 93;
+                var left = 770 + y * 0.75 * 107;
+                dojo.place( this.format_block( 'jstpl_tile', {
+                    id:square,
+					color:'blue',
+                    top:top,
+                    left:left,
+                    } ), player_board_id );
+            });
+            orange_tiles.forEach( square =>
+            {
+                const x = square % 10;
+                const y = Math.floor( square / 10);
+                const delta = y%2-1;
+                var top = 183 + (-delta/2 + x) * 93;
+                var left = 770 + y * 0.75 * 107;
+                dojo.place( this.format_block( 'jstpl_tile', {
+                    id:square,
+					color:'orange',
+                    top:top,
+                    left:left,
+                    } ), player_board_id );
+            });
+
+			
+		},
+
+        addTile: function( id, color, top, left )
+		{
+			dojo.place( this.format_block( 'jstpl_tile', {
+				id:'hnd_'+id,
+				color:color,
+				top:top,
+				left:left,
+				} ), player_board_id );			
+		},
+
+        placeTilesInHands: function( tiles_in_hands )
+		{
+			Object.entries(tiles_in_hands).forEach(([key, value]) => {
+                console.log(`${key}: ${value}`)
+				if( key == 1 & value > 0 )
+				{
+					this.addTile( '1_1','orange',1241,260);
+                }
+                else if( key == 2 & value > 0 )
+				{
+					this.addTile( '2_1','orange',1077,260);
+					this.addTile( '2_2','orange',1122,337);
+                } 				
+                else if( key == 3 & value > 0 )
+				{
+					this.addTile( '3_1','orange',929,260);
+					this.addTile( '3_2','blue',974,337);
+                } 				
+                else if( key == 4 & value > 0 )
+				{
+					this.addTile( '4_1','orange',769,259);
+					this.addTile( '4_2','orange',814,336);
+					this.addTile( '4_3','blue',858,413);
+                }
+                else if( key == 5 & value > 0 )
+				{
+					this.addTile( '5_1','orange',604,259);
+					this.addTile( '5_2','orange',649,336);
+					this.addTile( '5_3','blue',603,412);
+                }
+                else if( key == 6 & value > 0 )
+				{
+					this.addTile( '6_1','orange',469,259);
+					this.addTile( '6_2','orange',380,260);
+					this.addTile( '6_3','blue',424,338);
+                }
+				if( key == 7 & value > 0 )
+				{
+					this.addTile( '7_1','blue',57,2075);
+                }
+                else if( key == 8 & value > 0 )
+				{
+					this.addTile( '8_2','blue',219,2075);
+					this.addTile( '8_1','blue',174,1997);
+                } 				
+                else if( key == 9 & value > 0 )
+				{
+					this.addTile( '9_2','blue',368,2075);
+					this.addTile( '9_1','orange',324,1998);
+                } 				
+                else if( key == 10 & value > 0 )
+				{
+					this.addTile( '10_3','blue',528,2076);
+					this.addTile( '10_2','blue',484,1999);
+					this.addTile( '10_1','orange',440,1922);
+                }
+                else if( key == 11 & value > 0 )
+				{
+					this.addTile( '11_3','blue',694,2076);
+					this.addTile( '11_2','blue',649,1999);
+					this.addTile( '11_1','orange',695,1922);
+                }
+                else if( key == 12 & value > 0 )
+				{
+					this.addTile( '12_3','blue',829,2075);
+					this.addTile( '12_2','blue',918,2074);
+					this.addTile( '12_1','orange',873,1998);
+                }				
+				
+				
+			});
+
+		},
+
+        removeTileInHand: function( type )
+		{
+			const color1 = (type < 7 ) ? 'orange' : 'blue';
+			const color2 = (type < 7 ) ? 'blue' : 'orange';
+			console.log(color+'_tile_hnd_'+type+'_1');
+			
+			if( (type-1)%6 < 2 )
+			{
+			    this.fadeOutAndDestroy( color1+'_tile_hnd_'+type+'_1' );
+			}
+		    else
+			{
+				this.fadeOutAndDestroy( color2+'_tile_hnd_'+type+'_1' );
+			}
+			if( (type-1)%6 > 0 )
+			{
+				this.fadeOutAndDestroy( color+'_tile_hnd_'+type+'_2' );
+			}
+			if( (type-1)%6 > 2 )
+			{
+				this.fadeOutAndDestroy( color+'_tile_hnd_'+type+'_3' );
+			}			
+		},
+
 
         ///////////////////////////////////////////////////
         //// Player's action
@@ -289,7 +460,6 @@ function (dojo, declare) {
 
             this.default_viewport = "width=" + this.interface_min_width;
 
-// doesn't work            screen.orientation.lock('landscape');
 
             var MAP_WIDTH = 2419;
             var MAP_HEIGHT = 1396;
@@ -344,6 +514,54 @@ function (dojo, declare) {
                     this.black_holes.push(square)
                 }
             }
+            if( this.checkAction( 'placeTile', true ) )
+            {
+                console.log( 'clickon '+square); 
+			    if( this.isCurrentPlayerBlue() )
+			    {
+					if( dojo.hasClass( 'hex_'+square,'hex_blue_tile' ) )
+					{
+						dojo.removeClass( 'hex_'+square,'hex_blue_tile' );
+						const index = this.blue_tiles.indexOf(square);
+						this.blue_tiles.splice(index, 1);
+						dojo.addClass( 'hex_'+square,'hex_orange_tile' );
+						this.orange_tiles.push(square);
+					}
+					else if( dojo.hasClass( 'hex_'+square,'hex_orange_tile' ) )
+					{
+						dojo.removeClass( 'hex_'+square,'hex_orange_tile' );
+						const index = this.orange_tiles.indexOf(square);
+						this.orange_tiles.splice(index, 1);
+					}					
+					else
+					{
+						dojo.addClass( 'hex_'+square,'hex_blue_tile' );
+						this.blue_tiles.push(square);
+					}				   
+			    }
+				else if( this.isCurrentPlayerOrange() )
+				{
+					if( dojo.hasClass( 'hex_'+square,'hex_orange_tile' ) )
+					{
+						dojo.removeClass( 'hex_'+square,'hex_orange_tile' );
+						const index = this.orange_tiles.indexOf(square);
+						this.orange_tiles.splice(index, 1);
+						dojo.addClass( 'hex_'+square,'hex_blue_tile' );
+						this.blue_tiles.push(square);
+					}
+					else if( dojo.hasClass( 'hex_'+square,'hex_blue_tile' ) )
+					{
+						dojo.removeClass( 'hex_'+square,'hex_blue_tile' );
+						const index = this.blue_tiles.indexOf(square);
+						this.blue_tiles.splice(index, 1);
+					}					
+					else
+					{
+						dojo.addClass( 'hex_'+square,'hex_orange_tile' );
+						this.orange_tiles.push(square);
+					}					
+				}
+			}
         },
 
         onEndGalaxies: function(evt)
@@ -355,7 +573,7 @@ function (dojo, declare) {
                 {
                     galaxies += ( square+'_' );
                 } );
-
+                console.log('galaxies '+galaxies);
                 this.ajaxcall( "/orionduelhunt/orionduelhunt/chooseGalaxies.html", {
                         lock: true,
                         galaxies: galaxies },
@@ -379,6 +597,30 @@ function (dojo, declare) {
                     this, function( result ) {}, function( is_error) {} );
             }
         },
+		
+        onPlaceTile: function(evt)
+        {
+            if( this.checkAction( 'placeTile', true ) )
+            {
+                let blue_tiles = '';
+                Object.values(this.blue_tiles).forEach( square  =>
+                {
+                    blue_tiles += ( square+'_' );
+                } );
+                let orange_tiles = '';
+                Object.values(this.orange_tiles).forEach( square  =>
+                {
+                    orange_tiles += ( square+'_' );
+                } );
+				console.log('blue_tiles '+blue_tiles);
+				console.log('orange_tiles '+orange_tiles);
+                this.ajaxcall( "/orionduelhunt/orionduelhunt/placeTile.html", {
+                        lock: true,
+                        blue_tiles: blue_tiles,
+						orange_tiles: orange_tiles},
+                    this, function( result ) {}, function( is_error) {} );
+            }
+        },		
 
         onPlayerPass: function(evt)
         {
@@ -411,10 +653,12 @@ function (dojo, declare) {
             var notifications=[
                 ['galaxiesChoice'],
                 ['blackHolesChoice'],
+				['placeTiles']
 
 
             ];
             var notifications_nodelay=[
+			    ['displayInfo'],
             ];
 
             for(i=0;i<notifications.length;i++)
@@ -429,6 +673,13 @@ function (dojo, declare) {
         },
 
         // TODO: from this point and below, you can write your game notifications handling methods
+
+        notif_displayInfo: function( notif )
+        {
+            console.info( 'notif_displayInfo' );
+            console.info( notif );
+        },
+
         notif_galaxiesChoice: function( notif )
         {
             console.log( 'galaxiesChoice' );
@@ -444,6 +695,22 @@ function (dojo, declare) {
 			dojo.query( '.hex_black_hole' ).removeClass( 'hex_black_hole' );
             this.placeBlackHoles( notif.args.black_holes );
         },
+		
+        notif_placeTiles: function( notif )
+        {
+            console.log( 'placeTiles' );
+            console.log( notif );
+			dojo.query( '.hex_blue_tile' ).removeClass( 'hex_blue_tile' );
+			dojo.query( '.hex_orange_tile' ).removeClass( 'hex_orange_tile' );
+			this.blue_tiles = [];
+			this.orange_tiles = [];
+            this.placeBoardTiles( notif.args.blue_pieces, notif.args.orange_pieces );
+			if( notif.args.remove_type > 0 )
+			{
+				this.removeTileInHand( notif.args.remove_type );
+			}
+        },		
+		
 
    });
 });
