@@ -2,27 +2,27 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * OrionDuelHunt implementation : © <Your name here> <Your email address here>
+ * OrionDuel implementation : © <Your name here> <Your email address here>
  *
  * This code has been produced on the BGA studio platform for use on https://boardgamearena.com.
  * See http://en.doc.boardgamearena.com/Studio for more information.
  * -----
  *
- * orionduelhunt.action.php
+ * orionduel.action.php
  *
- * OrionDuelHunt main action entry point
+ * OrionDuel main action entry point
  *
  *
  * In this file, you are describing all the methods that can be called from your
  * user interface logic (javascript).
  *
  * If you define a method "myAction" here, then you can call it from your javascript code with:
- * this.ajaxcall( "/orionduelhunt/orionduelhunt/myAction.html", ...)
+ * this.ajaxcall( "/orionduel/orionduel/myAction.html", ...)
  *
  */
 
 
-class action_orionduelhunt extends APP_GameAction
+class action_orionduel extends APP_GameAction
 {
     // Constructor: please do not modify
     public function __default()
@@ -34,7 +34,7 @@ class action_orionduelhunt extends APP_GameAction
         }
         else
         {
-            $this->view = "orionduelhunt_orionduelhunt";
+            $this->view = "orionduel_orionduel";
             self::trace( "Complete reinitialization of board game" );
         }
     }
@@ -62,14 +62,12 @@ class action_orionduelhunt extends APP_GameAction
         self::setAjaxMode();
 
         $blue_tiles = self::getArg( "blue_tiles",  AT_alphanum_dash, true );
-		$orange_tiles = self::getArg( "orange_tiles",  AT_alphanum_dash, true );
+        $orange_tiles = self::getArg( "orange_tiles",  AT_alphanum_dash, true );
         $this->game->placeTileOnBoard( $blue_tiles, $orange_tiles );
         self::ajaxResponse();
     }
 
-
-
-     public function playerPass()
+    public function playerPass()
     {
         self::setAjaxMode();
 
@@ -77,4 +75,11 @@ class action_orionduelhunt extends APP_GameAction
         self::ajaxResponse();
     }
 
+    public function testRandom()
+    {
+        self::setAjaxMode();
+
+        $this->game->testRandom();
+        self::ajaxResponse();
+    }
   }
